@@ -1,5 +1,7 @@
 classdef SoattoBrockettCostFunction < CostFunction
-    %ALGEBRAICRESIDUAL Residual calcuated using the algebra from Soatto and Brockett
+%SoattoBrockettCostFunction -  Residual calcuated using the algebra from Soatto and Brockett
+%   Algebraic simplifications used to compute the cost function described in the supplement. No
+%   outlier rejection 
     
     properties
         X % Spherical positions
@@ -223,10 +225,10 @@ classdef SoattoBrockettCostFunction < CostFunction
             view(2)
             hold off
         end
+        % DEPRECATED - using gradients on (x,y) coordinates instead of (x,y,z) coordinates
         function plotPlanarGradients(c,nsamples,scale)
             if nargin < 2; nsamples = 30; end
             if nargin < 3; scale = 0.1; end
-            % This one was a failure...
             
             % Get the residuals
             [z,x,y] = c.getSurfaceResiduals(nsamples);

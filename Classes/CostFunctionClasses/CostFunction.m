@@ -1,7 +1,9 @@
 classdef CostFunction
-    %RESIDUAL Superclass for the residual calculations
-    %   The basic functions for getting the residual from a given method. All a subclass really
-    %   need to implement is the getResidual function and the constructor 
+%CostFunction - Superclass for the residual calculations
+%   The basic functions for getting the residual from a given method. All a subclass really
+%   need to implement is the getResidual function and the constructor. Takes in a flow
+%   (from the FlowClassses folder) and uses the individual flow vectors to compute cost. The methods
+%   in this superclass are to help find the minimum and help with visualization
     
     properties
         flow % Optical flow we are using the residual on
@@ -20,21 +22,34 @@ classdef CostFunction
             c.trueT = flow.trueT;
             c.verbose = true;
         end
-        % Residual of a translation
+        % Total residual of a translation in given heading direction
+        % Inputs:
+        % T - size (3 x 1), norm(T)==1
         function [resid] = getResidual(c,T)
             resid = sum(c.getFlowResiduals(T));
         end
-        % Residual for each flow vector
+        % Residual for each flow vector for given heading direction T
+        % Inputs:
+        % T - size (3 x 1), norm(T)==1
         function [flowResids] = getFlowResiduals(c,T)
             flowResids = zeros(c.flow.nPoints,1);
         end
+        % Get angular velocity from the flow in given heading direction 
+        % Inputs:
+        % T - size (3 x 1), norm(T)==1
         function [Omega] = getOmega(c,T)
             Omega = zeros(size(T));
         end
+        % Inverse depth for each flow vector for given heading direction 
+        % Inputs:
+        % T - size (3 x 1), norm(T)==1
         function [rho] = getInverseDepths(c,T,Omega)
             rho = zeros(flow.nPoints,1);
         end
-        % Get residuals for each translation on the sphere
+        % Get residuals for each translation on the sphere.
+        % Inputs:
+        % sphereDensity - positive integer, specifies density of grid on the sphere 
+        %                 (optional, default 14)
         function [residuals, translations] = getSphereResiduals(c,sphereDensity)
             if nargin < 2
                 sphereDensity = 14;
@@ -53,6 +68,10 @@ classdef CostFunction
                 residuals(t) = c.getResidual(translations(:,t));
             end
         end
+
+        % Get residuals in a polor coordinate grid and compute the associated surface.
+        % Inputs:
+        % nsamples - positive integer, specifies density of polar grid (optional, default 25)
         function [z,x,y] = getSurfaceResiduals(c,nsamples)
             if nargin < 2
                 nsamples = 25;
@@ -74,7 +93,10 @@ classdef CostFunction
             end
         end
         
-        % Go to local minima starting at initPos
+        % Go to local minima starting at initPos. This can be quite slow, since for now it just
+        % uses fmincon.
+        % Inputs:
+        % initPos - size (3 x 1), norm(initPos)==1, used as starting place for gradient descent
         function [finalPos] = gradientDescent(c,initPos)
             cost = @(T) c.getResidual(T);
             options = optimset('Display','off');
@@ -84,8 +106,7 @@ classdef CostFunction
                                 @(T) deal(cineq(T),ceq(T)),options);
         end
 
-        % Give score of flow vectors to remove as outliers - using avg.
-        % likelihood
+        % Give score of flow vectors to remove as outliers - using avg. likelihood
         function [O] = outlierRejection(c)
             nsamples = 11; % Parameters to choose
             theta = linspace(0,2*pi,nsamples);
@@ -104,9 +125,8 @@ classdef CostFunction
             M = mean(E)';
             O = sum(exp(-E/diag(M))/diag(M),2);
         end
-        
-        % Give score of flow vectors to remove as outliers - using Joint.
-        % log likelihood
+
+        % DEPRECATED - Give score of flow vectors to remove as outliers using joint log likelihood
         function [O] = outlierRejectionJoint(c)
             nsamples = 11; % Parameters to choose
             theta = linspace(0,2*pi,nsamples);
@@ -129,7 +149,12 @@ classdef CostFunction
             end
         end
         
-        % For brevity in batch computations
+        % Get the main pieces of information from the flow - used in batch computations. It returns
+        % the true heading direction T, the minimum cost heading direction computed by this class,
+        % the associated angular error, as well as the angular velocity (omega) associated with the
+        % minimum cost heading and its residual.
+        % Inputs:
+        % nsamples - positive integer specifying density of polar grid (optional, default 25)
         function [result] = getResults(c,nsamples)
             if nargin < 2; nsamples = 25; end;
             [z, x, y] = c.getSurfaceResiduals(nsamples); 
@@ -147,6 +172,13 @@ classdef CostFunction
         end
         
         % Different plotting functions
+        % Plot the residuals on the unit hemisphere as dots, with color specifying cost. True and
+        % computed heading direction are highlighted (as well as closest true point on the grid).
+        % Inputs:
+        % useGradientDescent - boolean, in case you want a more precise plot of the computed heading
+        %                      direction (optional, default false)
+        % sphereDensity - positive integer specifies how dense the points on the sphere will be 
+        %                 plotted (optional, default 14)
         function plotResiduals(c,useGradientDescent,sphereDensity)
             if nargin < 2; useGradientDescent = false; end
             if nargin < 3; sphereDensity = 14; end
@@ -189,6 +221,15 @@ classdef CostFunction
             zlabel('Z')
             view(2)
         end
+
+        % Main plotting function used. Uses a polor coordinate grid and computes the residual for
+        % each point on the grid, and plots the surface of the resulting values. The true and
+        % computed heading directions are plotted as points on the surface
+        % Inputs:
+        % newFigure - boolean, specifies creating a new matlab figure (optional, default true)
+        % useGradientDescent - boolean, specifies whether to plot heading direction using estimate
+        %                      gotten from gradient descent (slower, optional, default false)
+        % nsamples - positive integer, specifies the courseness of the grid (optional, default 25)
         function [min_value] = plotResidualsSurface(c,newFigure,useGradientDescent,nsamples)
             if nargin < 2; newFigure = true; end
             if nargin < 3; useGradientDescent = false; end
@@ -226,6 +267,15 @@ classdef CostFunction
                 min_value = guessedT;
             end
         end
+
+        % Similar to plotResidualsSurface, except plots the resulting surface as a heatmap
+        % Inputs:
+        % newFigure - boolean, specifies creating a new matlab figure (optional, default true)
+        % useGradientDescent - boolean, specifies whether to plot heading direction using estimate
+        %                      gotten from gradient descent (slower, optional, default false)
+        % nsamples - positive integer, specifies the courseness of the grid (optional, default 25)
+        % nlevels - positive integer, specifies number of levels the heatmap should plot out
+        %           (optional, default 30)
         function plotResidualsHeatmap(c,newFigure,useGradientDescent,nsamples,nlevels)
             if nargin < 2
                 newFigure = true;

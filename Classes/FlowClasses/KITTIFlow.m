@@ -1,8 +1,18 @@
 classdef KITTIFlow < Flow
-    %IMAGEFLOW Flow based on images in KITTI dataset
-    %   Flow extracted from the image sequence in the KITTI dataset, the location specified by
-    %   baseDir. What flow you get is complete specified by the sequence and the image index
-    
+%KITTIFlow Flow based on images in KITTI dataset
+%   Flow extracted from the image sequence in the KITTI dataset, the location specified by
+%   baseDir. What flow you get is complete specified by the sequence and the image index
+% Inputs:
+% baseDir - string, specifies where the KITTI Odometry dataset is saved
+% Properties (all optional):
+% sequence_index - integer from 0-10, sequence to extract frames from. Default: 10
+% image_index - positive integer defining which image in the sequence to use. Default: 15
+% MinQuality - positive number, specifying quality of points accepted in the corner detection.
+%              Smaller means more points will be accepted. Default: 0.01
+% NumPyramidLevels - Number of levels used for multiscale KLT flow estimation. Default: 4
+% MaxBidirectionalError - Another dection for quality of point, in pixels. Smaller means less points
+%                         accepted. Default: 1
+
     properties % (SetAccess = private)
         sequence_index = 10 % TODO: Make these zero indexed
         image_index = 15 % TODO: Make these zero indexed

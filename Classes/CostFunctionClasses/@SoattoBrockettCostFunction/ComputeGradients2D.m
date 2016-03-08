@@ -1,4 +1,4 @@
-% For more complex usage of the function
+% DEPRECATED - Gradient to use if one uses (x,y) coordinates instead of (x,y,z) coordinates
 function [f,Df,Hf] = ComputeGradients2D(c,T,upto)
     if nargin < 3; upto = 2; end;
     T(3) = sqrt(1 - (T(1)^2 + T(2)^2));
@@ -133,18 +133,6 @@ function [f,Df,Hf] = ComputeGradients2D(c,T,upto)
      
     Df = (2*DT'*c.S*T - (DH'*Omega + DOmega'*H));
     if upto == 2; return; end;
-    % Now we compute the 2x2 Hessian. We use 
-    % T(3) = sqrt(1 - (T(1)^2 - T(2)^2))
-    % again, along with these:
-    % d^2(T(3))/(dT(1)^2) = (T(2)^2 - 1)/(sqrt(1 - (T(1)^2 + T(2)^2))^3) ...
-    %                     = (T(2)^2 - 1)/(T(3)^3)
-    % d^2(T(3))/(dT(2)^2) = (T(1)^2 - 1)/(sqrt(1 - (T(1)^2 + T(2)^2))^3) ...
-    %                     = (T(1)^2 - 1)/(T(3)^3)
-    % d^2(T(3))/(dT(1) dT(2)) = -(T(1)*T(2))/(sqrt(1 - (T(1)^2 + T(2)^2))^3) ...
-    %                         = -(T(1)*T(2))/(T(3)^3)
-%     d2T3dT11 = (T(2)^2 - 1)/(T(3)^3);
-%     d2T3dT22 = (T(1)^2 - 1)/(T(3)^3);
-%     d2T3dT12 = -(T(1)*T(2))/(T(3)^3);
 
-    Hf = eye(3); %  when we get around to it.
+    Hf = eye(3); 
 end

@@ -1,8 +1,22 @@
 classdef ImageFlow < Flow
-    %IMAGEFLOW Flow based on images in KITTI dataset
-    %   Flow extracted from the image sequence in the KITTI dataset, the location specified by
-    %   baseDir. What flow you get is complete specified by the sequence and the image index
-    
+%ImageFlow - Flow extracted from pairs of images
+%   Uses standard KLT on a pair of images
+% Inputs:
+% img0 - size (m x n) matrix, for the first image in the pair
+% img1 - size (m x n) matrix, for the second image in the pair
+% Properties (all optional):
+% MinQuality - positive number, specifying quality of points accepted in the corner detection.
+%              Smaller means more points will be accepted. Default: 0.01
+% NumPyramidLevels - Number of levels used for multiscale KLT flow estimation. Default: 4
+% MaxBidirectionalError - Another dection for quality of point, in pixels. Smaller means less points
+%                         accepted. Default: 1
+% trueT - size (3 x 1) vector. for true heading direction. Assumed norm(trueT) == 1. If not known, 
+%         it just means that we cannot compute the true error of the heading direction estimation.
+%         Default: [0,0,0] (means unknown)
+% trueOmega - size (3 x 1) vector. for true angular velocity. If not known, it just means that we
+%             cannot compute the true error of the heading direction estimation. Default:
+%             [0,0,0] (means unknown)
+
     properties % (SetAccess = private)
         img0
         img1

@@ -1,6 +1,6 @@
 classdef ZhangTomasiCostFunction < CostFunction
-    %OMEGARESIDUAL Summary of this class goes here
-    %   Detailed explanation goes here
+%ZhangTomasiCostFunction - Uses formulation from Zhang/Tomasi cited in paper
+%   No outlier rejection used in this scheme
     
     properties
         B % Matrix coefficients (n x 1 cell array of 3 x 3 matrices)

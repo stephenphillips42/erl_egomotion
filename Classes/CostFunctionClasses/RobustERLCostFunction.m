@@ -1,6 +1,6 @@
 classdef RobustERLCostFunction < CostFunction
-    % ROBUSTCOSTFUNCTION This computes weights for each of the flow vectors
-    % based on its fit to the model
+%RobustERLCostFunction - This implements the Expected Residual Likelihood to estimate heading
+%   This is the main result of the paper
     
     % Side note for this implementation we will
     properties

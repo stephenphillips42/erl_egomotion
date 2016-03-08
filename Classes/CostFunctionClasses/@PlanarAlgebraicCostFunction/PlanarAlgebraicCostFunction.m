@@ -1,6 +1,7 @@
 classdef PlanarAlgebraicCostFunction < CostFunction
-    %ALGEBRAICRESIDUAL Summary of this class goes here
-    %   Detailed explanation goes here
+%PlanarAlgebraicCostFunction - Fast computation of heading using algebraic simplifications
+%   The algebraic simplifications are given in the supplemental material of the paper. No outlier
+%   rejection is used here
     
     properties
         X % Spherical positions

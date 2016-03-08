@@ -1,5 +1,5 @@
 classdef Flow
-%FLOW Superclass that extracts flow
+%Flow - Superclass that extracts flow
 %   The FLOW class extracts the optical flow uv (a 2 x N array) and the flow's positions 
 %   (a 2 x N array). It also gives the pixel coordinates of said flow, uv_pixel and
 %   xy_pixel, along with the associated calibration matrix K and image size imgsize. The
@@ -54,17 +54,6 @@ classdef Flow
             hold off
         end
         
-    end
-    
-    methods (Access = protected)
-%         function value = definedOrDefault_long(~,name,default,args_in)
-%             ind = (find(strcmp(args_in,name)));
-%             if isempty(ind)
-%                 value = default;
-%             else
-%                 value = args_in{ind+1};
-%             end
-%         end
     end
 
 end

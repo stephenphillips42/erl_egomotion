@@ -1,6 +1,6 @@
 classdef EpipolarCostFunction < CostFunction
-    %EPIPOLARCOSTFUNCTION Summary of this class goes here
-    %   Detailed explanation goes here
+%EpipolarCostFunction - Using Epipolar RANSAC to estimate heading direction
+%   Uses Peter Corke's Robotics tool box as implementation of RANSAC
     
     properties
         p % points

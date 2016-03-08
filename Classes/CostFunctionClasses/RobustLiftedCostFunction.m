@@ -1,6 +1,6 @@
 classdef RobustLiftedCostFunction < ZhangMatrixCostFunction
-    % ROBUSTCOSTFUNCTION This computes weights for each of the flow vectors
-    % based on its fit to the model
+%RobustLiftedCostFunction - This computes the heading direction using the lifted kernel formulation
+%   This is the main method we compare ERL to
     
     % Side note for this implementation we will
     properties
@@ -60,13 +60,6 @@ classdef RobustLiftedCostFunction < ZhangMatrixCostFunction
         
         function [r, Omega, w] = getOmegaAndWeights(c,V)
         % Solve for the omega and the weights for the given V
-            % Old way
-            % cost = @(input) c.mycost(input,X,Y);
-            % options = optimoptions('lsqnonlin','Jacobian','on','display','off');
-            % Omega_weights = lsqnonlin(cost, [X\Y; c.weights],[],[],options);
-            % Omega = Omega_weights(1:3);
-            % w = Omega_weights(4:end);
-
             % Create the matrices
             m = c.flow.nPoints;
             A1 = normc(reshape(c.Aperp*V,2,[]));
