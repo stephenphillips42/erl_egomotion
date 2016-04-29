@@ -43,6 +43,7 @@ classdef ImageFlow < Flow
             new_points = double(new_points(valid,:));
             points = double(points.Location(valid,:));
 
+            imgFlow.K = definedOrDefault('K',imgFlow.K);
             % Calibrate the points for Cperp computation and residual computation
             imgFlow.xy = [1,0,0;
                           0,1,0]*(imgFlow.K\[ points';
