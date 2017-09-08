@@ -1,4 +1,4 @@
-classdef RobustLiftedCostFunction < ZhangMatrixCostFunction
+classdef RobustLiftedCostFunction < ZhangTomasiCostFunction
 %RobustLiftedCostFunction - This computes the heading direction using the lifted kernel formulation
 %   This is the main method we compare ERL to
     
@@ -19,7 +19,7 @@ classdef RobustLiftedCostFunction < ZhangMatrixCostFunction
     
     methods
         function c = RobustLiftedCostFunction(flow,varargin)
-            c@ZhangMatrixCostFunction(flow)
+            c@ZhangTomasiCostFunction(flow)
             
             % Parameters
             definedOrDefault = @(name,value) definedOrDefault_long(name,value,varargin);
@@ -50,7 +50,7 @@ classdef RobustLiftedCostFunction < ZhangMatrixCostFunction
             if c.weights_initalized
                 f = c.getOmegaAndWeights(V);
             else
-                f = c.getFlowResiduals@ZhangMatrixCostFunction(V);
+                f = c.getFlowResiduals@ZhangTomasiCostFunction(V);
             end
         end
         
